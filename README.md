@@ -6,8 +6,9 @@ Project is in early phase, and currently code cover just some peaces.
 ### Roadmap
 - [ ] Interactive UI (ongoing)
 - [ ] Write NZXT Kraken X driver (ongoing)
-- [ ] Write NZXT Kraken MM driver
 - [ ] Support Linux (ongoing)
+- [ ] LED Configuration
+- [ ] Write NZXT Kraken MM driver
 - [ ] Support Windows
 - [ ] Support MacOS
 
