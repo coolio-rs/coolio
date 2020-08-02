@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gresources>
+	<gresource prefix="/icons/scalable/actions">
+      <file alias="save-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/save.svg</file>
+      <file alias="copy-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/copy.svg</file>
+      <file alias="times-circle-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/times-circle.svg</file>
+      <file alias="trash-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/trash.svg</file>
+      <file alias="thermometer-three-quarters-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/thermometer-three-quarters.svg</file>
+      <file alias="thermometer-quarter-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/thermometer-quarter.svg</file>
+      <file alias="thermometer-half-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/thermometer-half.svg</file>
+      <file alias="thermometer-full-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/thermometer-full.svg</file>
+      <file alias="thermometer-empty-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/thermometer-empty.svg</file>
+      <file alias="temperature-low-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/temperature-low.svg</file>
+      <file alias="temperature-high-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/temperature-high.svg</file>
+      <file alias="tint-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/tint.svg</file>
+      <file alias="water-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/water.svg</file>
+      <file alias="fan-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/fan.svg</file>
+      <file alias="wind-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/wind.svg</file>
+      <file alias="snowflake-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/snowflake.svg</file>
+      <file alias="microchip-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/microchip.svg</file>
+      <file alias="memory-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/memory.svg</file>
+      <file alias="desktop-symbolic.svg">node_modules/@fortawesome/fontawesome-free/svgs/solid/desktop.svg</file>
+  </gresource>
+</gresources>

@@ -1,0 +1,185 @@
+@keyframes header_ripple_effect {
+    from {
+      background-image: radial-gradient(circle farthest-corner at center, #ffffff 0%, transparent 0%);
+    }
+    to {
+      background-image: radial-gradient(circle farthest-corner at center, #ffffff 100%, transparent 0%);
+    }
+}
+  
+@keyframes ripple_effect {
+    from {
+      background-image: radial-gradient(circle farthest-corner at center, alpha(currentColor,0.1) 0%, transparent 0%);
+    }
+    to {
+      background-image: radial-gradient(circle farthest-corner at center, alpha(currentColor,0.1) 100%, transparent 0%);
+    }
+}
+
+@keyframes ripple_warn {
+    from {
+      background-image: radial-gradient(circle farthest-corner at center, alpha(currentColor,0.1) 0%, transparent 0%);
+    }
+    to {
+      background-image: radial-gradient(circle farthest-corner at center, alpha(currentColor,0.1) 100%, transparent 0%);
+    }
+}
+  
+@keyframes ripple_critical {
+    from {
+      background-image: radial-gradient(circle farthest-corner at center, alpha(currentColor,0.1) 0%, transparent 0%);
+    }
+    to {
+      background-image: radial-gradient(circle farthest-corner at center, alpha(currentColor,0.1) 100%, transparent 0%);
+    }
+}
+
+/* default color scheme */
+@define-color base_color #ffffff;
+@define-color bg_color #fafbfc;
+@define-color text_color #5c616c;
+@define-color fg_color #5c616c;
+@define-color selected_bg_color #d64937;
+@define-color selected_fg_color #f9f9f9;
+@define-color tooltip_bg_color #2d2d2d;
+@define-color tooltip_fg_color #dcdcdc;
+
+/* dark color scheme */
+@define-color dark_bg_color #2d2d2d;
+@define-color dark_fg_color #dcdcdc;
+
+/* colormap actually used by the theme, to be overridden in other css files */
+@define-color theme_bg_color @bg_color;
+@define-color theme_fg_color @fg_color;
+@define-color theme_base_color @base_color;
+@define-color theme_text_color @text_color;
+@define-color theme_selected_bg_color @selected_bg_color;
+@define-color theme_selected_fg_color @selected_fg_color;
+@define-color theme_tooltip_bg_color @tooltip_bg_color;
+@define-color theme_tooltip_fg_color @tooltip_fg_color;
+
+/* shadow effects */
+@define-color light_shadow #fff;
+@define-color dark_shadow #000;
+
+/* misc colors used by gtk+ */
+@define-color info_fg_color rgb (58, 135, 173);
+@define-color info_bg_color rgb (217, 237, 247);
+@define-color warning_fg_color rgb (192, 152, 83);
+@define-color warning_bg_color rgb (252, 248, 227);
+@define-color question_fg_color rgb (214, 73, 55);
+@define-color question_bg_color rgb (252, 229, 213);
+@define-color error_fg_color red;
+@define-color error_bg_color #FC4138;
+@define-color link_color #fc6f5d;
+@define-color success_color #53a93f;
+@define-color warning_color #f57900;
+@define-color error_color #cc0000;
+
+/* widget colors */
+@define-color menubar_bg_color @dark_bg_color;
+@define-color menubar_fg_color @dark_fg_color;
+@define-color toolbar_bg_color @theme_bg_color;
+@define-color toolbar_fg_color @theme_fg_color;
+@define-color menu_bg_color @dark_bg_color;
+@define-color menu_fg_color @dark_fg_color;
+@define-color panel_bg_color @dark_bg_color;
+@define-color panel_fg_color @dark_fg_color;
+
+/* osd */
+@define-color osd_base @dark_bg_color;
+@define-color osd_fg @dark_fg_color;
+@define-color osd_bg alpha(@osd_base, 0.8);
+
+/* window manager colors */
+@define-color wm_bg #2d2d2d;
+@define-color wm_border_focused #484848;
+@define-color wm_border_unfocused #393939;
+@define-color wm_title_focused #dcdcdc;
+@define-color wm_title_unfocused #888888;
+@define-color wm_icons_focused #dcdcdc;
+@define-color wm_icons_focused_prelight @selected_bg_color;
+@define-color wm_icons_focused_pressed shade(@selected_bg_color, 0.8);
+@define-color wm_icons_unfocused #888888;
+@define-color wm_icons_unfocused_prelight @selected_bg_color;
+@define-color wm_icons_unfocused_pressed shade(@selected_bg_color, 0.8);
+
+.main_panel {
+    min-width: 800px;
+}
+
+notebook tab  {
+    font-size: 14pt;
+    min-width: 150px;
+    margin-top: 10px;
+}
+
+.metric {
+    margin: 5px;
+    margin-top: 10px;
+    padding: 0;
+}
+
+
+.metric .metric-panel {
+    padding: 5px;
+    background: transparent;
+    border: 1px solid alpha(@fg_color, 0.5);
+    animation: none;
+}
+.metric .metric-panel.normal { animation: none; }
+.metric .metric-panel.critical { color: @error_fg_color; border-color: alpha(@error_fg_color, 0.5); animation: none, ripple_warn 1s infinite;}
+.metric .metric-panel.warn { color: orange; border-color: alpha(orange, 0.5); animation: none, ripple_critical 1s infinite;}
+
+.metric label.value {
+    font-size: 32px;
+    font-weight: 500;
+}
+.metric label.unit {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+image.chart {
+    /* border: 1px solid rgba(96, 109, 188, 0.5); */
+    /* padding: 0; */
+}
+.cooling-dev-config {
+    /* background-color: #f8f8f8; */
+}
+
+.border-1 {
+    border: 1px solid alpha(@fg_color, 0.5);
+}
+
+.p-0 { padding: 0;}
+.m-0 { margin: 0; }
+.p-5 { padding: 5px; }
+.pr-5 { padding-right: 5px;}
+.pl-5 { padding-left: 5px;}
+.pt-5 { padding-top: 5px;}
+.pb-5 { padding-bottom: 5px;}
+
+.p-10 { padding: 10px; }
+.pr-10 { padding-right: 10px;}
+.pl-10 { padding-left: 10px;}
+.pt-10 { padding-top: 10px;}
+.pb-10 { padding-bottom: 10px;}
+
+.m-0 { margin: 0px; }
+
+.m-5 { padding: 5px; }
+.mr-5 { padding-right: 5px;}
+.ml-5 { padding-left: 5px;}
+.mt-5 { padding-top: 5px;}
+.mb-5 { padding-bottom: 5px;}
+
+.m-10 { padding: 10px; }
+.mr-10 { padding-right: 10px;}
+.ml-10 { padding-left: 10px;}
+.mt-10 { padding-top: 10px;}
+.mb-10 { padding-bottom: 10px;}
+
+.bord-fg {
+    border: 1px solid @fg_color;
+}

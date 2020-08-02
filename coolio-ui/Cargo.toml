@@ -1,0 +1,45 @@
+[package]
+name = "coolio-ui"
+version = "0.1.0"
+authors = ["Milan Jarić <milan.jaric@gmail.com>"]
+edition = "2018"
+build = "build.rs"
+
+[[bin]]
+name = "coolio"
+path = "src/coolio.rs"
+
+[dependencies]
+coolio-drivers = { path = "../coolio-drivers" }
+env_logger="0.7"
+log = "0.4"
+lazy_static = "1.4"
+relm = "0.20"
+relm-derive = "0.20"
+rusb = "0.6"
+serde = {version="1.0", features= ["derive"]}
+toml  = "0.5"
+measurements = "0.10"
+usvg = "0.11"
+resvg = "0.11"
+
+[dependencies.cairo-rs]
+version = "0.9"
+features = ["png", "svg", "v1_16"]
+
+[dependencies.gio]
+version = "0.9"
+
+[dependencies.glib]
+version = "0.10"
+
+[dependencies.gdk]
+version = "0.13"
+
+[dependencies.gtk]
+version = "0.9"
+features = ["v3_22"]
+
+[dependencies.gdk-pixbuf]
+version = "0.9"
+features = ["v2_32"]
