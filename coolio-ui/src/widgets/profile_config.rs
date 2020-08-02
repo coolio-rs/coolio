@@ -56,9 +56,6 @@ impl relm::Widget for ProfileConfig {
     self
       .monitor_sensor
       .append(Some("liquid"), "Liquid Temperature");
-    self
-      .monitor_sensor
-      .set_active_id(self.model.selected_sensor.as_ref().map(|v| v.as_str()));
 
     let style = self.chart.get_style_context();
     style.add_class("p-0");
@@ -317,6 +314,7 @@ impl relm::Widget for ProfileConfig {
           item: { homogeneous: false, expand: false },
           #[name="monitor_sensor"]
           gtk::ComboBoxText {
+            active_id: self.model.selected_sensor.as_ref().map(|v| v.as_str()),
             changed(val) => SelectSensor(val.get_active_id().map(|s| s.to_string()))
           },
         }
