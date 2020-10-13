@@ -2,6 +2,10 @@
 pub struct Icon(&'static str);
 
 impl Icon {
+  pub fn to_icon_name(&self) -> Option<&'static str> {
+    Some(self.name())
+  }
+
   pub fn name(&self) -> &'static str {
     self.0
   }

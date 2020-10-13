@@ -1,4 +1,4 @@
-use coolio_drivers::{CoolingConf, CoolingProfile};
+use coolio_drivers::{DeviceConf, CoolingProfile};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
@@ -18,18 +18,18 @@ impl Default for AppConfig {
       profiles: vec![
         CoolingProfile {
           name: String::from("Silent"),
-          fan: CoolingConf::silent_fan(),
-          pump: CoolingConf::silent_pump(),
+          fan: DeviceConf::silent_fan(),
+          pump: DeviceConf::silent_pump(),
         },
         CoolingProfile {
           name: String::from("Performance"),
-          fan: CoolingConf::performance_fan(),
-          pump: CoolingConf::performance_pump(),
+          fan: DeviceConf::performance_fan(),
+          pump: DeviceConf::performance_pump(),
         },
         CoolingProfile {
           name: String::from("Fixed"),
-          fan: CoolingConf::fiexed_fan(),
-          pump: CoolingConf::fiexed_pump(),
+          fan: DeviceConf::fixed_fan(),
+          pump: DeviceConf::fiexed_pump(),
         },
       ],
     }
@@ -38,7 +38,7 @@ impl Default for AppConfig {
 
 impl AppConfig {
   pub fn to_abs_path(app_path_relative: &str) -> String {
-    let app_dir = std::env::current_exe().expect("App dir is unkonwn");
+    let app_dir = std::env::current_exe().expect("App dir is unknown");
     let pathbuf = std::path::Path::new(&app_dir).join(app_path_relative);
     pathbuf.to_str().expect("ah, path is invalid").to_string()
   }
@@ -101,7 +101,7 @@ impl AppConfig {
 #[cfg(test)]
 mod config_test {
   use crate::config::AppConfig;
-  use coolio_drivers::CoolingConf;
+  use coolio_drivers::DeviceConf;
   use coolio_drivers::CoolingProfile;
   use std::env;
   use std::path::{Path, PathBuf};
@@ -117,8 +117,8 @@ mod config_test {
       selected_profile: Some("ConfigTest".to_string()),
       profiles: vec![CoolingProfile {
         name: "ConfigTest".to_string(),
-        fan: CoolingConf::FixedSpeed(20),
-        pump: CoolingConf::FixedSpeed(60),
+        fan: DeviceConf::FixedSpeed(20),
+        pump: DeviceConf::FixedSpeed(60),
       }],
     };
 
@@ -135,15 +135,16 @@ mod config_test {
       selected_profile: Some("Fixed".to_string()),
       profiles: vec![CoolingProfile {
         name: "Fixed".to_string(),
-        fan: CoolingConf::FixedSpeed(20),
-        pump: CoolingConf::FixedSpeed(60),
+        fan: DeviceConf::FixedSpeed(20),
+        pump: DeviceConf::FixedSpeed(60),
       }],
     })
     .unwrap();
     assert_eq!(
       config,
-      r#"[[profiles]]
-current = false
+      r#"selected_profile = "Fixed"
+
+[[profiles]]
 name = "Fixed"
 
 [profiles.fan]

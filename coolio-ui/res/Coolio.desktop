@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Coolio
+Exec={{PATH}}
+Icon=
+Type=Application
+Categories=GTK;GNOME;Utility;

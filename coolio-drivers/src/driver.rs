@@ -1,5 +1,14 @@
-use crate::config::CoolingConf;
-use crate::DeviceStatus;
+use hidapi::DeviceInfo;
+use hidapi::HidError;
+use crate::config::DeviceConf;
+use crate::Metric;
+
+#[derive(Clone)]
+pub struct DeviceStatus {
+  pub description: String,
+  pub counters: Vec<Metric>,
+  pub firmware: Option<(u16, u16, u16)>,
+}
 
 pub trait Driver {
   /// Human readable description of the corresponding device
@@ -44,6 +53,8 @@ pub trait Driver {
     false
   }
 
+  fn device_info(&self) -> &DeviceInfo;
+
   /// returns how much bytes should be read from device during communication
   fn read_size(&self) -> usize;
 
@@ -52,7 +63,7 @@ pub trait Driver {
 
   fn read_status(&mut self, buf: &[u8], read_length: usize) -> Result<DeviceStatus, DriverError>;
 
-  fn encode(&self, cfg: CoolingConf) -> Result<Vec<&[u8]>, DriverError>;
+  fn encode(&self, channel: &str, cfg: DeviceConf) -> Result<Vec<Vec<u8>>, DriverError>;
 }
 
 #[derive(Debug)]
@@ -63,4 +74,10 @@ pub enum DriverError {
   EncodingError(String),
   DecodingError(String),
   NotSupported(String),
+}
+
+impl From<HidError> for DriverError {
+  fn from(err: HidError) -> Self {
+    DriverError::HidApiError(format!("{}", err))
+  }
 }

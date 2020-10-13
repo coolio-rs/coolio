@@ -1,12 +1,13 @@
 // use coolio_drivers::CoolingConf;
-use coolio_drivers::{CoolingConf, Metric, MonitorHeat};
+use coolio_drivers::{DeviceConf, Metric, MonitorHeat};
 use gdk::RGBA;
 use gtk::prelude::*;
-use gtk::{ImageExt, StyleContextExt, WidgetExt};
+use gtk::{ImageExt, StyleContextExt, WidgetExt, Orientation};
 use relm::Relm;
 use relm_derive::{widget, Msg};
 use std::ops::Rem;
 use std::str::FromStr;
+use crate::icons::Icon;
 
 // const PIN_ICON: &str = "find-location-symbolic";
 use self::ProfileConfigMsg::*;
@@ -19,7 +20,7 @@ pub enum ProfileConfigMsg {
   DrawLineChart(gtk::Image, cairo::Context),
   UpdateMetric(Metric),
   SelectSensor(Option<String>),
-  SetProfile(CoolingConf),
+  SetProfile(DeviceConf),
   Ignore,
 }
 
@@ -39,6 +40,7 @@ lazy_static! {
 #[derive(Clone)]
 pub struct Model {
   relm: Relm<ProfileConfig>,
+  icon: Icon,
   profile: Vec<(u8, u8)>,
   device: String,
   liquid_temp: f64,
@@ -52,6 +54,7 @@ pub struct Model {
 #[widget]
 impl relm::Widget for ProfileConfig {
   fn init_view(&mut self) {
+    self.device_icon.set_from_icon_name(self.model.icon.to_icon_name(), gtk::IconSize::LargeToolbar);
     self.monitor_sensor.append(Some("cpu"), "CPU Temperature");
     self
       .monitor_sensor
@@ -78,9 +81,10 @@ impl relm::Widget for ProfileConfig {
     self.draw_chart();
   }
 
-  fn model(relm: &Relm<Self>, (device,): (String,)) -> Model {
+  fn model(relm: &Relm<Self>, (device, icon): (String, Icon)) -> Model {
     Model {
       relm: relm.clone(),
+      icon,
       device,
       profile: (0..16).map(|s| (s * 5 + 20, 50)).collect::<Vec<_>>(),
       liquid_temp: 0.0,
@@ -95,11 +99,11 @@ impl relm::Widget for ProfileConfig {
   fn update(&mut self, event: ProfileConfigMsg) {
     match event {
       SetProfile(profile) => match profile {
-        CoolingConf::VariableSpeed(sensor, p) => {
+        DeviceConf::VariableSpeed(sensor, p) => {
           self.model.selected_sensor = Some(sensor.to_string());
           self.model.profile = p;
         }
-        CoolingConf::FixedSpeed(p) => {
+        DeviceConf::FixedSpeed(p) => {
           self.model.selected_sensor = Some(MonitorHeat::Liquid.to_string());
           self.model.profile = (0..16).map(|s| (s * 5 + 20, p)).collect::<Vec<_>>();
         }
@@ -290,20 +294,26 @@ impl relm::Widget for ProfileConfig {
   view! {
     #[name="box1"]
     gtk::Box {
-      orientation: gtk::Orientation::Vertical,
+      orientation: Orientation::Vertical,
       homogeneous: false,
       spacing: 10,
+      #[name="header"]
       gtk::Toolbar {
-        orientation: gtk::Orientation::Horizontal,
+        orientation: Orientation::Horizontal,
         child: {
           expand: false,
           fill: true
         },
         gtk::ToolItem {
           item: {expand: true},
-          gtk::Label {
-            text: &self.model.device.to_uppercase(),
-            halign: gtk::Align::Start
+          halign: gtk::Align::Start,
+          gtk::Box {
+            orientation: Orientation::Horizontal,
+            homogeneous: false,
+            spacing: 5,
+            #[name="device_icon"]
+            gtk::Image { child: { fill: false, expand: false}, },
+            gtk::Label { child: { fill: true, expand: false}, text: &self.model.device.to_uppercase() }
           }
         },
         gtk::ToolItem {

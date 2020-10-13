@@ -1,65 +1,44 @@
 use crate::config::AppConfig;
-use crate::icons;
+use crate::icons::Icon;
 use crate::widgets::{MetricMsg, MetricWidget, ProfileConfig, ProfileConfigMsg};
-use coolio_drivers::Metric;
+use coolio_drivers::{Metric, MetricCollector, DeviceManager};
 use gtk::prelude::*;
 use gtk::{BaselinePosition, FlowBoxExt, Orientation, StyleContextExt, WidgetExt};
 use relm::interval;
 use relm::{Component, ContainerWidget, Relm, Widget};
 use relm_derive::{widget, Msg};
-use std::ops::Rem;
 
 #[derive(Msg)]
 pub enum CoolingMsg {
   Save,
   SaveAs,
   Delete,
-  UpdateDeviceStatus,
   SelectMasterProfile,
   UpdateMetric(Metric),
   AddMetric(Metric),
+  UpdateDeviceStatus,
+  Ignore
 }
 
 use CoolingMsg::*;
 
-#[derive(Clone)]
+
 pub struct Cooling {
   relm: Relm<CoolingPage>,
   config: AppConfig,
   counters: Vec<(String, Component<MetricWidget>)>,
+  device_manager: DeviceManager,
+  metric_collector: MetricCollector
 }
 
-fn fake_metrics(cpu: f64, duration: f64) -> Vec<Metric> {
+fn monitored() -> Vec<Metric> {
   vec![
-    Metric::new("dev.cpu.heat", cpu * 100.0, "°C", 100.0),
-    Metric::new("dev.cpu.user", cpu, "%", 1.0),
-    Metric::new(
-      "dev.krakenX.liquid",
-      (cpu * duration / 1.5) * 100.0 + 10.0,
-      "°C",
-      60.0,
-    ),
-    Metric::new(
-      "dev.krakenX.fan",
-      cpu * 1800.0 * (duration / 1.1),
-      "rpm",
-      1800.0,
-    ),
-    Metric::new(
-      "dev.krakenX.pump",
-      cpu * 2700.0 * (duration / 1.1),
-      "rpm",
-      2700.0,
-    ),
+    Metric::new("dev.cpu.heat", 0.0, "°C", 100.0),
+    Metric::new("dev.cpu.user", 0.0, "%", 100.0),
+    Metric::new("dev.krakenX.liquid", 0.0, "°C", 60.0),
+    Metric::new("dev.krakenX.fan", 0.0, "rpm", 1800.0),
+    Metric::new("dev.krakenX.pump", 0.0, "rpm", 2700.0),
   ]
-}
-
-fn pull_metrics() -> Vec<Metric> {
-  let past = std::time::SystemTime::now()
-    .duration_since(std::time::UNIX_EPOCH)
-    .unwrap();
-  let cpu = past.as_secs().rem(100) as f64 / 100.0;
-  fake_metrics(cpu, cpu)
 }
 
 #[widget]
@@ -81,7 +60,7 @@ impl Widget for CoolingPage {
       .main_profile_label
       .get_style_context()
       .add_class("pr-5");
-    let mut metrics = pull_metrics();
+    let mut metrics = monitored();
     metrics.reverse();
     while let Some(metric) = metrics.pop() {
       self.model.relm.stream().emit(AddMetric(metric.clone()));
@@ -90,23 +69,25 @@ impl Widget for CoolingPage {
 
   fn model(relm: &Relm<Self>, _params: ()) -> Cooling {
     let config = AppConfig::load();
+    let device_manager = DeviceManager::new().unwrap();
+    let metric_collector = MetricCollector::new();
     Cooling {
       relm: relm.clone(),
       config,
       counters: vec![],
+      device_manager,
+      metric_collector
     }
   }
 
   fn subscriptions(&mut self, relm: &Relm<Self>) {
-    interval(relm.stream(), 3000, || UpdateDeviceStatus);
+    interval(relm.stream(), 2000, || UpdateDeviceStatus);
   }
 
   fn update(&mut self, msg: CoolingMsg) {
     match msg {
       UpdateDeviceStatus => {
-        let mut metrics = pull_metrics();
-        metrics.reverse();
-        while let Some(metric) = metrics.pop() {
+        for metric in self.model.metric_collector.read_last() {
           self.model.relm.stream().emit(UpdateMetric(metric.clone()));
           self
             .fan_profile
@@ -141,6 +122,12 @@ impl Widget for CoolingPage {
         self.model.counters.push((key.into(), widget));
       }
       UpdateMetric(metric) => {
+        self
+          .fan_profile
+          .emit(ProfileConfigMsg::UpdateMetric(metric.clone()));
+        self
+          .pump_profile
+          .emit(ProfileConfigMsg::UpdateMetric(metric.clone()));
         if let Some((_, widget)) = self.model.counters.iter().find(|(k, _)| metric.is(k)) {
           widget.emit(MetricMsg::Update(metric));
         }
@@ -194,7 +181,7 @@ impl Widget for CoolingPage {
             expand: false,
           },
           label: Some("Save"),
-          icon_name: Some("save-symbolic")
+          icon_name: Icon::SAVE.to_icon_name()
         },
         #[name="save_profile_as"]
         gtk::ToolButton {
@@ -203,7 +190,7 @@ impl Widget for CoolingPage {
             expand: false,
           },
           label: Some("Save as"),
-          icon_name: Some("copy-symbolic")
+          icon_name: Icon::COPY.to_icon_name()
         },
         #[name="delete_profile"]
         gtk::ToolButton {
@@ -212,7 +199,7 @@ impl Widget for CoolingPage {
             expand: false,
           },
           label: Some("Delete as"),
-          icon_name: Some("trash-symbolic")
+          icon_name: Icon::TRASH.to_icon_name()
         },
       },
       #[name="counter_widgets"]
@@ -237,14 +224,14 @@ impl Widget for CoolingPage {
           expand: false
         },
         #[name="fan_profile"]
-        ProfileConfig(("fan".to_string(),)) {
+        ProfileConfig(("fan".to_string(), Icon::WIND)) {
           child: {
             fill: true,
             expand: true,
           },
         },
         #[name="pump_profile"]
-        ProfileConfig(("pump".to_string(),)) {
+        ProfileConfig(("pump".to_string(), Icon::TINT)) {
           child: {
             fill: true,
             expand: true,

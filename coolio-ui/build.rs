@@ -2,14 +2,7 @@ use std::env;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use std::{fs, fs::File};
-
-fn icon_path(icon_name: &str) -> String {
-  format!(
-    "node_modules/@fortawesome/fontawesome-free/svgs/solid/{}.svg",
-    icon_name
-  )
-}
+use std::fs::File;
 
 fn main() {
   println!("cargo:rerun-if-changed=res/gtk-light.css");

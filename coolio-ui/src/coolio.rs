@@ -8,7 +8,7 @@ use gtk::Orientation::Vertical;
 use gtk::{prelude::*, GtkWindowExt};
 use gtk::{BaselinePosition, PackType};
 
-use relm::Widget;
+use relm::{Widget, Relm};
 use relm_derive::{widget, Msg};
 
 mod config;
@@ -56,7 +56,7 @@ impl Widget for MainWindow {
     //app.send_notification(None, &gio::Notification::new("Hi"));
   }
 
-  fn model() -> AppState {
+  fn model(_relm: &Relm<Self>, _: ()) -> AppState {
     gtk::IconTheme::get_default()
       .unwrap()
       .add_resource_path("/icons");

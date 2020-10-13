@@ -2,7 +2,7 @@ use core::str::FromStr;
 use serde::{Deserialize, Serialize};
 
 bitflags! {
-  /// Some [ColorMode's](enum.ColorMode.html) supports animation direction, but probabbly not all,
+  /// Some [ColorMode's](enum.ColorMode.html) supports animation direction, but probably not all,
   /// check driver docs to find out what you can use
   pub struct Direction: u8 {
     const FWD = 0x00;
@@ -15,15 +15,15 @@ bitflags! {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "mode", content = "params")]
 pub enum ColorMode {
-  /// Turs off all LEDs
+  /// Turns off all LEDs
   Off,
-  /// Sets single color on all leds in givven channel
+  /// Sets single color on all LEDs in given channel
   Fixed(u8, u8, u8),
-  /// Fades LED color. Some devices supportes multiple colors.
+  /// Fades LED color. Some devices supports multiple colors.
   Fading(Vec<(u8, u8, u8)>),
   // Complete color spectrum will be used
   // SpectrumWave(Direction),
-  // LEDs will cycle throug colors so it looks like collors are
+  // LEDs will cycle trough colors so it looks like colors are
   // animated with scrolling effect
   // Marquee(Direction, Vec<Color>),
 }
@@ -35,9 +35,9 @@ pub type SubsystemChannel = String;
 
 // /// Lighting color channel.
 // ///
-// /// Some devices supports multiple coolor channel. Default should be `"sync"`
+// /// Some devices supports multiple color channel. Default should be `"sync"`
 // /// but note that this may fail or override to specific channel by driver in
-// /// case where only one color channel does support specifiedd color [ColorMode](enum.ColorMode.html)`.
+// /// case where only one color channel does support specified color [ColorMode](enum.ColorMode.html)`.
 // pub type ColorChannel = String;
 
 /// Animation speed
@@ -71,7 +71,7 @@ impl FromStr for Speed {
 
 /// The device's underling subsystem duty.
 ///
-/// For instance, this could be **Fan** duty that can be betwee **0-100%**
+/// For instance, this could be **Fan** duty that can be between **50-100%**
 pub type Duty = u8;
 
 pub type Temperature = u8;
@@ -106,24 +106,27 @@ impl<T: ToString> From<T> for MonitorHeat {
   }
 }
 
-/// Device Configuration
+/// Device subsystem configuration
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 #[serde(tag = "type", content = "params")]
-pub enum CoolingConf {
-  /// Fixed
+pub enum DeviceConf {
+  /// Fixed speed, no mather what, the duty of the subsystem will be set
+  /// to configured value with exception to critical temperature where 
+  /// the device subsystem duty will be set to 100%.
   FixedSpeed(Duty),
+  /// Variable speed. Measured temperature from heat source  will
   VariableSpeed(MonitorHeat, Vec<(Temperature, Duty)>),
 }
 
-impl Default for CoolingConf {
+impl Default for DeviceConf {
   fn default() -> Self {
-    CoolingConf::FixedSpeed(60)
+    DeviceConf::FixedSpeed(60)
   }
 }
 
-impl CoolingConf {
-  pub fn silent_fan() -> CoolingConf {
-    CoolingConf::VariableSpeed(
+impl DeviceConf {
+  pub fn silent_fan() -> DeviceConf {
+    DeviceConf::VariableSpeed(
       MonitorHeat::Liquid,
       vec![
         (20, 25),
@@ -146,8 +149,8 @@ impl CoolingConf {
     )
   }
 
-  pub fn performance_fan() -> CoolingConf {
-    CoolingConf::VariableSpeed(
+  pub fn performance_fan() -> DeviceConf {
+    DeviceConf::VariableSpeed(
       MonitorHeat::Liquid,
       vec![
         (20, 50),
@@ -170,15 +173,15 @@ impl CoolingConf {
     )
   }
 
-  pub fn fiexed_fan() -> CoolingConf {
-    CoolingConf::VariableSpeed(
+  pub fn fixed_fan() -> DeviceConf {
+    DeviceConf::VariableSpeed(
       MonitorHeat::Liquid,
       (0..16).map(|v| (20 + v * 5, 25)).collect::<Vec<(u8, u8)>>(),
     )
   }
 
-  pub fn silent_pump() -> CoolingConf {
-    CoolingConf::VariableSpeed(
+  pub fn silent_pump() -> DeviceConf {
+    DeviceConf::VariableSpeed(
       MonitorHeat::Cpu,
       vec![
         (20, 50),
@@ -201,8 +204,8 @@ impl CoolingConf {
     )
   }
 
-  pub fn performance_pump() -> CoolingConf {
-    CoolingConf::VariableSpeed(
+  pub fn performance_pump() -> DeviceConf {
+    DeviceConf::VariableSpeed(
       MonitorHeat::Cpu,
       vec![
         (20, 70),
@@ -225,8 +228,8 @@ impl CoolingConf {
     )
   }
 
-  pub fn fiexed_pump() -> CoolingConf {
-    CoolingConf::VariableSpeed(
+  pub fn fiexed_pump() -> DeviceConf {
+    DeviceConf::VariableSpeed(
       MonitorHeat::Cpu,
       (0..16).map(|v| (20 + v * 5, 50)).collect::<Vec<(u8, u8)>>(),
     )
@@ -237,8 +240,8 @@ impl CoolingConf {
 #[serde(default)]
 pub struct CoolingProfile {
   pub name: String,
-  pub fan: CoolingConf,
-  pub pump: CoolingConf,
+  pub fan: DeviceConf,
+  pub pump: DeviceConf,
 }
 
 impl Default for CoolingProfile {

@@ -128,8 +128,8 @@ notebook tab  {
     animation: none;
 }
 .metric .metric-panel.normal { animation: none; }
-.metric .metric-panel.critical { color: @error_fg_color; border-color: alpha(@error_fg_color, 0.5); animation: none, ripple_warn 1s infinite;}
-.metric .metric-panel.warn { color: orange; border-color: alpha(orange, 0.5); animation: none, ripple_critical 1s infinite;}
+.metric .metric-panel.critical { color: @error_fg_color; border-color: alpha(@error_fg_color, 0.5); }
+.metric .metric-panel.warn { color: orange; border-color: alpha(orange, 0.5); }
 
 .metric label.value {
     font-size: 32px;
