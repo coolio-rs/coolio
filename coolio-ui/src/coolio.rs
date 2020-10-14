@@ -28,25 +28,21 @@ pub struct AppState {}
 #[widget]
 impl Widget for MainWindow {
   fn init_view(&mut self) {
-    if let Ok(path) = &mut std::env::current_exe() {
-      path.pop();
-      path.push("gtk-light.css");
-      debug!("Trying to load theme from path {:?}", path);
-      let screen = gdk::Screen::get_default().expect("Error init gtk css provider");
+    let css_str = include_bytes!("../res/gtk-light.css");
+    let screen = gdk::Screen::get_default().expect("Error init gtk css provider");
 
-      let css = gtk::CssProvider::new();
-      if let Some(theme_path) = path.to_str() {
-        if let Err(error) = css.load_from_path(theme_path) {
-          debug!("Failed to load theme due error {:?}", error);
-        }
-        gtk::StyleContext::add_provider_for_screen(
-          &screen,
-          &css,
-          gtk::STYLE_PROVIDER_PRIORITY_USER,
-        );
-        gtk::StyleContext::reset_widgets(&screen);
-      }
+    let css = gtk::CssProvider::new();
+    
+    if let Err(error) = css.load_from_data(css_str) {
+      debug!("Failed to load theme due error {:?}", error);
     }
+    gtk::StyleContext::add_provider_for_screen(
+      &screen,
+      &css,
+      gtk::STYLE_PROVIDER_PRIORITY_USER,
+    );
+    gtk::StyleContext::reset_widgets(&screen);
+  
 
     self.main_window.set_default_size(850, 300);
     self.main_window.set_resizable(false);

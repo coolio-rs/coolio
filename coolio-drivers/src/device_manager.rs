@@ -15,16 +15,14 @@ pub struct DeviceManager {
 
 impl DeviceManager {
   pub fn new() -> Result<Self, DriverError> {
-    let api = hidapi::HidApi::new()?;
-    
-    if let Some(driver) = resolve_driver(&api) {
+    if let Some(driver) = resolve_driver(&HAPI) {
       Ok(Self { driver })
     } else {
       Err(DriverError::NoDeviceFound)
     }
   }
 
-  fn write(&self, channel: &str, cfg: DeviceConf) -> Result<(), DriverError> {
+  pub fn write(&self, channel: &str, cfg: DeviceConf) -> Result<(), DriverError> {
     let device = self.driver.device_info().open_device(&HAPI)?;
     let writes = self.driver.encode(channel, cfg)?;
     let mut write_result: Result<(), DriverError> = Ok(());

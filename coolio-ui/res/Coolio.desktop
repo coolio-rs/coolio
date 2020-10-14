@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Coolio
-Exec={{PATH}}
-Icon=
+Exec=/usr/bin/coolio
+Icon=/usr/share/icons/coolio-rs/app-icon.png
 Type=Application
 Categories=GTK;GNOME;Utility;

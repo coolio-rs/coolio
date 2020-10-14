@@ -12,7 +12,7 @@ const UNIT_TEMPERATURE: &'static str = "°C";
 const UNIT_DUTY: &'static str = "%";
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Metric(String, f64, String, f64);
 
 impl Metric {
@@ -109,7 +109,7 @@ impl MetricCollector {
         .with_components_list();
       let system = &mut System::new_with_specifics(refresh_kind);
       let device_manager = &mut DeviceManager::new().unwrap();
-      let pause = 3000;
+      let pause = Duration::from_millis(2000);
       loop {
         match stop_rx.try_recv() {
           Ok(_) | Err(TryRecvError::Disconnected) => break,
@@ -130,7 +130,7 @@ impl MetricCollector {
             }
           }
         }
-        thread::sleep(Duration::from_millis(pause));
+        thread::sleep(pause);
       }
     });
     Self {

@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Milan Jarić <milan.jaric@gmail.com>"]
 edition = "2018"
 build = "build.rs"
+license = "GPL"
+repository = "https://github.com/coolio-rs/coolio"
+publish = false
 
 [[bin]]
 name = "coolio"
@@ -43,3 +46,19 @@ features = ["v3_22"]
 [dependencies.gdk-pixbuf]
 version = "0.9"
 features = ["v2_32"]
+
+
+[package.metadata.deb]
+name = "coolio-rs"
+maintainer = "Milan Jaric"
+depends = "$auto"
+copyright = "2020, Milan Jaric."
+extended-description = "NZXT KrakenX series configurator and monitoring app."
+license-file = ["../LICENSE", "2"]
+section = "utils"
+priority = "optional"
+assets = [
+    ["../target/release/coolio", "usr/bin/", "755"],
+    ["res/app-icon.png", "usr/share/icons/coolio-rs/", "644"],
+    ["res/Coolio.desktop", "usr/share/applications/", "644"]
+]

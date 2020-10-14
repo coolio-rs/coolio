@@ -98,15 +98,18 @@ impl relm::Widget for ProfileConfig {
 
   fn update(&mut self, event: ProfileConfigMsg) {
     match event {
-      SetProfile(profile) => match profile {
-        DeviceConf::VariableSpeed(sensor, p) => {
-          self.model.selected_sensor = Some(sensor.to_string());
-          self.model.profile = p;
-        }
-        DeviceConf::FixedSpeed(p) => {
-          self.model.selected_sensor = Some(MonitorHeat::Liquid.to_string());
-          self.model.profile = (0..16).map(|s| (s * 5 + 20, p)).collect::<Vec<_>>();
-        }
+      SetProfile(profile) => {
+        match profile {
+          DeviceConf::VariableSpeed(sensor, p) => {
+            self.model.selected_sensor = Some(sensor.to_string());
+            self.model.profile = p;
+          }
+          DeviceConf::FixedSpeed(p) => {
+            self.model.selected_sensor = Some(MonitorHeat::Liquid.to_string());
+            self.model.profile = (0..16).map(|s| (s * 5 + 20, p)).collect::<Vec<_>>();
+          }
+        };
+        self.draw_chart();
       },
       OnPanelButtonDown(button) => {
         let pos = button.get_position();
@@ -123,7 +126,8 @@ impl relm::Widget for ProfileConfig {
         match button.get_button() {
           1 => {
             // felt mouse button
-            self.model.selected_index = None
+            self.model.selected_index = None;
+            self.draw_chart();
           }
           3 => {
             // right mouse button
@@ -146,16 +150,20 @@ impl relm::Widget for ProfileConfig {
               p.1 = duty.max(p.1)
             }
           }
+          self.draw_chart();
         }
       }
       DrawLineChart(_img, _cr) => {
-        self.draw_chart();
+        //self.draw_chart();
       }
-      UpdateMetric(metric) => match metric.path().as_slice() {
-        ["dev", "cpu", "heat"] => self.model.cpu_temp = metric.value(),
-        ["dev", "krakenX", "liquid"] => self.model.liquid_temp = metric.value(),
-        ["dev", "krakenM", "liquid"] => self.model.liquid_temp = metric.value(),
-        _ => (),
+      UpdateMetric(metric) => {
+        match metric.path().as_slice() {
+          ["dev", "cpu", "heat"] => self.model.cpu_temp = metric.value(),
+          ["dev", "krakenX", "liquid"] => self.model.liquid_temp = metric.value(),
+          ["dev", "krakenM", "liquid"] => self.model.liquid_temp = metric.value(),
+          _ => (),
+        };
+        self.draw_chart();
       },
       SelectSensor(val) => self.model.selected_sensor = val,
       Ignore => (),
@@ -343,8 +351,7 @@ impl relm::Widget for ProfileConfig {
         #[name="chart"]
         gtk::Image {
           valign: gtk::Align::Center,
-          halign: gtk::Align::Center,
-          draw(w, cr) => (DrawLineChart(w.clone(), cr.clone()), Inhibit(false)),
+          halign: gtk::Align::Center
         },
       }
     },

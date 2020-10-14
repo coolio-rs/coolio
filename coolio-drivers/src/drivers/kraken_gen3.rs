@@ -58,7 +58,7 @@ impl KrakenGen3 {
     let stdtemps = (20u8..50u8)
       .chain((50u8..=60u8).step_by(2))
       .collect::<Vec<_>>();
-    let normalized = normalize_profile(profile, CRITICAL_TEMPERATURE, MIN_DUTY);
+    let normalized = normalize_profile(profile, CRITICAL_TEMPERATURE, duty_min);
     let interpolated_profile = stdtemps
       .iter()
       .enumerate()
@@ -122,7 +122,8 @@ impl Driver for KrakenGen3 {
   }
 
   fn supports_cooling_profile(&self) -> bool {
-    self.supports_cooling && self.firmware_version >= Some((3, 0, 0))
+    debug!("supports cooling {:?} VERSION {:?}", self.supports_cooling, self.firmware_version);
+    self.supports_cooling // && self.firmware_version >= Some((3, 0, 0))
   }
 
   fn device_info(&self) -> &DeviceInfo {

@@ -47,14 +47,9 @@ impl Widget for CoolingPage {
     for p in self.model.config.profiles.as_slice() {
       self.master_profile_combobox.append(Some(&p.name), &p.name);
     }
-    self.master_profile_combobox.set_active_id(
-      self
-        .model
-        .config
-        .selected_profile
-        .as_ref()
-        .map(String::as_str),
-    );
+    if let Some(profile) = &self.model.config.selected_profile {
+      self.master_profile_combobox.set_active_id(Some(profile));
+    }
     self.cooling_box.get_style_context().add_class("p-10");
     self
       .main_profile_label
@@ -107,6 +102,8 @@ impl Widget for CoolingPage {
           None
         };
         let new_current = self.model.config.current();
+        self.model.device_manager.write("fan", new_current.fan.clone()).unwrap();
+        self.model.device_manager.write("pump", new_current.pump.clone()).unwrap();
         self
           .fan_profile
           .emit(ProfileConfigMsg::SetProfile(new_current.fan));

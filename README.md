@@ -18,3 +18,7 @@ Project is in early phase, and currently code cover just some peaces.
 Below is current UI state with fake live data.
 
 <img src="https://github.com/coolio-rs/coolio/blob/master/doc/sample.gif?raw=true" width="500">
+
+
+# Todo Cross Compile
+https://gtk-rs.org/docs-src/tutorial/cross
