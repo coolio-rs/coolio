@@ -1,7 +1,7 @@
 # coolio
 Water cooling device configuration utility written completely in Rust language.
 
-Project is in early phase, and currently code cover just some peaces. 
+Project is in early phase, and currently code cover just some pieces. 
 
 ### Roadmap
 - [ ] Interactive UI (ongoing)
